@@ -102,7 +102,7 @@ class testParentNode(unittest.TestCase):
     def test_repr(self):
         child_node = LeafNode("span", "child")
         parent_node = ParentNode("H1", child_node, {"href": "https://baraka.media", "target":"_blank"})
-        self.assertEqual("ParentNode(H1, LeafNode(span, child, None), {'href': 'https://baraka.media', 'target': '_blank'})", repr(parent_node))
+        self.assertEqual("ParentNode(H1, children:LeafNode(span, child, None), {'href': 'https://baraka.media', 'target': '_blank'})", repr(parent_node))
 
 if __name__ == "__main__":
     unittest.main()

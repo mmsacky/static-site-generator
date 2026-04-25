@@ -1,6 +1,6 @@
 
 class HTMLNode:
-    def __init__(self, tag = None, value= None, children= None, props= None):
+    def __init__(self, tag=None, value=None, children=None, props=None):
         self.tag = tag 
         self.value = value
         self.children = children
@@ -25,11 +25,10 @@ class LeafNode(HTMLNode):
 
     def to_html(self):
         
-        # If something later on doest work change this back to if not self.value
         if self.value is None:
             raise ValueError("There is no value")
 
-        if not self.tag:
+        if self.tag is None:
             return self.value
 
         return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
@@ -43,17 +42,16 @@ class ParentNode(HTMLNode):
 
     def to_html(self):
 
-        if not self.tag:
+        if self.tag is None:
             raise ValueError("No HTML tag found")
         
-        if not self.children:
+        if self.children is None:
             raise ValueError("No child node found")
         
-        # If string conversion happens later on remove it here
         children_html = "".join(str(child.to_html()) for child in self.children)
         
         return f"<{self.tag}{self.props_to_html()}>{children_html}</{self.tag}>"
     
     def __repr__(self):
-        return f"ParentNode({self.tag}, {self.children}, {self.props})"
+        return f"ParentNode({self.tag}, children:{self.children}, {self.props})"
     
