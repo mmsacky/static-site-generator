@@ -1,5 +1,4 @@
 import os, shutil
-# from pathlib import Path
 from markdown_to_blocks import markdown_to_blocks
 from markdown_to_html import markdown_to_html_node
 
@@ -33,7 +32,7 @@ def extract_title(markdown):
     raise Exception("The markdown contains no H1 header")
         
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath):
     print(f"Generating page from {from_path} to {dest_path} using {template_path} ...")
     
     with open(from_path, "r") as content_file:
@@ -45,11 +44,13 @@ def generate_page(from_path, template_path, dest_path):
     content_as_html = markdown_to_html_node(content).to_html()
 
     page_title = extract_title(content)
-    
+    print(basepath)
     template = (
         template
         .replace("{{ Title }}",page_title)
         .replace("{{ Content }}",content_as_html)
+        .replace('href="/',f'href="{basepath}')
+        .replace('src="/',f'src="{basepath}')
     )
 
     dest_dir = os.path.dirname(dest_path)
@@ -60,7 +61,7 @@ def generate_page(from_path, template_path, dest_path):
     with open(dest_path, "w") as web_page:
         web_page.write(template)
 
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath):
     
     content_dir = os.listdir(dir_path_content)
     
@@ -72,10 +73,9 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
         if os.path.isfile(item_path):
             _, extension = os.path.splitext(item_path)
             if extension.lower() == ".md":
-                # html_file = item.replace(".md",".html")
                 html_file = item.removesuffix(".md") + ".html"
                 dest_path = os.path.join(dest_dir_path, html_file)
-                generate_page(item_path, template_path, dest_path)
+                generate_page(item_path, template_path, dest_path, basepath)
         else:
             new_dest_dir_path = os.path.join(dest_dir_path,item)
-            generate_pages_recursive(item_path, template_path, new_dest_dir_path)
+            generate_pages_recursive(item_path, template_path, new_dest_dir_path, basepath)
